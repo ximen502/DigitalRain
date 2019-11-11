@@ -1,0 +1,2 @@
+# DigitalRain
+黑客帝国电影的字符下落效果的android自定义view实现
