@@ -35,8 +35,11 @@ public class NeoView extends View {
         }
 
         private String getChar(){
+            return katakana[random.nextInt(96)];
+            /*
             char charItem = (char) (0x30a0 + (random.nextInt(96)));
             return String.valueOf(charItem);
+            */
             /*
             char[] array = new char[62];
             for (int i=0x30;i<=0x39;i++){
@@ -83,6 +86,7 @@ public class NeoView extends View {
     float fadeInterval = 1.6f;
 
     Object[] streams;
+    String[] katakana;
 
     private void init() {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -131,7 +135,20 @@ public class NeoView extends View {
     }
 
     private void setUp() {
-        streams = new Object[mWidth/TEXT_SIZE];
+        if (streams == null && mWidth > 0) {
+            streams = new Object[mWidth / TEXT_SIZE];
+        } else {
+            // 防止重复初始化数组，避免框架层对onMeasure多次调用，造成重复创建对象。
+            return;
+        }
+
+        // 初始化katakana字符数组
+        if (katakana == null) {
+            katakana = new String[96];
+        }
+        for (int i = 0; i < 96; i++){
+            katakana[i] = String.valueOf((char) (0x30a0 + i));
+        }
 
         for (int j = 0; j < streams.length; j++) {
             int opacity = 255;
@@ -139,7 +156,7 @@ public class NeoView extends View {
             int speed = random.nextInt(22 - 5) + 5;
             Symbol[] symbols = new Symbol[length];
             int sx = this.x + j * TEXT_SIZE;
-            boolean first = random.nextInt(3) == 1;
+            boolean first = random.nextInt(100) < 45;
             this.y = - random.nextInt(500);
             for (int i = 0; i < length; i++) {
                 Symbol symbol = new Symbol(sx, y - (i * TEXT_SIZE), speed, first, opacity);
