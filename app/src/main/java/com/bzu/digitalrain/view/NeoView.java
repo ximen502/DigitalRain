@@ -1,11 +1,14 @@
 package com.bzu.digitalrain.view;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.bzu.digitalrain.R;
 
 import java.util.Random;
 
@@ -84,6 +87,12 @@ public class NeoView extends View {
     int frameCount =0;
     int[] interval = {9,11,17,23,29};
     float fadeInterval = 1.6f;
+    final int DEFAULT_TEXT_COLOR = Color.argb(255, 0, 255, 70);
+    int textColor;
+    int a;
+    int r;
+    int g;
+    int b;
 
     Object[] streams;
     String[] katakana;
@@ -92,6 +101,11 @@ public class NeoView extends View {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setARGB(255, 0, 255, 70);
         mPaint.setTextSize(TEXT_SIZE);
+        a = textColor >> 24 & 0xff;
+        r = textColor >> 16 & 0xff;
+        g = textColor >> 8 & 0xff;
+        b = textColor & 0xff;
+        mPaint.setARGB(a, r, g, b);
 
         mPaintLight = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaintLight.setARGB(255, 140, 255, 170);
@@ -102,17 +116,18 @@ public class NeoView extends View {
     }
 
     public NeoView(Context context) {
-        super(context);
-        init();
+        this(context, null);
     }
 
     public NeoView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
+        this(context, attrs, 0);
     }
 
     public NeoView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.NeoView,defStyleAttr, 0);
+        textColor = a.getColor(R.styleable.NeoView_textColor, DEFAULT_TEXT_COLOR);
+        a.recycle();
         init();
     }
 
@@ -182,7 +197,7 @@ public class NeoView extends View {
                     mPaintLight.setARGB(symbol.opacity, 140, 255, 170);
                     canvas.drawText(symbol.value, symbol.x, symbol.y, mPaintLight);
                 } else {
-                    mPaint.setARGB(symbol.opacity, 0, 255, 70);
+                    mPaint.setARGB(symbol.opacity, r, g, b);
                     canvas.drawText(symbol.value, symbol.x, symbol.y, mPaint);
                 }
             }
